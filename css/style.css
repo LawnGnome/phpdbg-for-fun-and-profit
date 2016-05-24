@@ -26,6 +26,13 @@
   font-weight: normal !important;
 }
 
+.todo {
+  color: red !important;
+  font-weight: bold !important;
+  font-family: "Comic Sans MS", inherit !important;
+  text-decoration: blink !important;
+}
+
 /* Background styles. */
 
 /* Support a "translucent" background that puts the default gradient over the
