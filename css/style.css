@@ -43,9 +43,8 @@
 }
 
 /* Slide specific styles. */
-.reveal #title h2 {
-  opacity: 0.7;
-  text-decoration: line-through;
+.reveal #title h1 {
+  font-size: 3em;
 }
 
 .image-credits .licence:before {
