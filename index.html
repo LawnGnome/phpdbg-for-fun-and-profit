@@ -179,8 +179,49 @@ prompt&gt; <span class="cursor"></span></code>
 						</aside>
 					</section>
 
-					<section id="help?">
-						<img src="images/help.png">
+					<section id="help">
+						<code class="terminal" style="font-size: 0.3em">prompt&gt; help
+
+<strong>phpdbg</strong> is a lightweight, powerful and easy to use debugging
+platform for PHP5.4+
+It supports the following commands:
+
+<strong>Information</strong>
+  <strong>list</strong>     list PHP source
+  <strong>info</strong>     displays information on the debug session
+  <strong>print</strong>    show opcodes
+  <strong>frame</strong>    select a stack frame and print a stack frame summary
+  <strong>back</strong>     shows the current backtrace
+  <strong>help</strong>     provide help on a topic
+
+<strong>Starting and Stopping Execution</strong>
+  <strong>exec</strong>     set execution context
+  <strong>run</strong>      attempt execution
+  <strong>step</strong>     continue execution until other line is reached
+  <strong>continue</strong> continue execution
+  <strong>until</strong>    continue execution up to the given location
+  <strong>next</strong>     continue execution up to the given location and halt on the first line after it
+  <strong>finish</strong>   continue up to end of the current execution frame
+  <strong>leave</strong>    continue up to end of the current execution frame and halt after the calling instruction
+  <strong>break</strong>    set a breakpoint at the specified target
+  <strong>watch</strong>    set a watchpoint on $variable
+  <strong>clear</strong>    clear one or all breakpoints
+  <strong>clean</strong>    clean the execution environment
+
+<strong>Miscellaneous</strong>
+  <strong>set</strong>      set the phpdbg configuration
+  <strong>source</strong>   execute a phpdbginit script
+  <strong>register</strong> register a phpdbginit function as a command alias
+  <strong>sh</strong>       shell a command
+  <strong>ev</strong>       evaluate some code
+  <strong>quit</strong>     exit phpdbg
+
+Type <strong>help &lt;command&gt;</strong> or (<strong>help alias</strong>) to get detailed help on any of the above commands, for example <strong>help list</strong> or <strong>h l</strong> Note that help will also match partial commands if unique (and list out options if not unique), so <strong>help clea</strong> will give help on the <strong>clean</strong> command, but <strong>help cl</strong> will list the summary for <strong>clean</strong> and <strong>clear</strong>.  
+
+Type <strong>help aliases</strong> to show a full alias list, including any registered phpdginit functions
+Type <strong>help syntax</strong> for a general introduction to the command syntax.
+Type <strong>help options</strong> for a list of phpdbg command line options.
+Type <strong>help phpdbginit</strong> to show how to customise the debugger environment.</code>
 						<aside class="notes">
 							Ack! Luckily, it's not that bad. I'm not going to cover
 							everything, but I'm going to cover the immediately useful stuff
@@ -355,7 +396,7 @@ prompt&gt; <span class="cursor"></span></code>
 						</aside>
 					</section>
 
-					<section id="eval-is-evil?">
+					<section id="eval-is-evil">
 						<code class="terminal">prompt&gt; help ev
 Command: <strong>ev</strong>  Alias:
 The <strong>ev</strong> command takes a string expression which it evaluates
@@ -489,7 +530,7 @@ prompt&gt; <span class="cursor"></span></code>
 						</aside>
 					</section>
 
-					<section id="profit?">
+					<section id="profit">
 						<code class="terminal">prompt&gt; step
 <span class="green">[L12         0x10a6801c0 CONCAT                  @6                   " "                  ~7                   /tmp/code/fizzbuzz.php]</span>
 &gt;00012:   echo fizzbuzz($n).' ';
