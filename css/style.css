@@ -58,6 +58,35 @@
   background-color: #f7fbfc;
 }
 
+/* Terminal handling. Max width is 60 characters. */
+.reveal code.terminal {
+  display: block;
+  white-space: pre;
+  text-align: left;
+  background: #3f3f3f;
+  color: #dcdcdc;
+  font-size: 1.17em;
+}
+
+.reveal code.terminal .green {
+  color: LightGreen;
+}
+
+.reveal code.terminal .cursor:before {
+  content: "█";
+  animation: cursor 2s step-start infinite;
+}
+
+@keyframes cursor {
+  0% {
+    opacity: 1.0;
+  }
+
+  50% {
+    opacity: 0.0;
+  }
+}
+
 /* Slides with specific background images have their opacity crunched down. */
 .backgrounds .stack div[style*="background-image"].slide-background.present {
   opacity: 0.15;

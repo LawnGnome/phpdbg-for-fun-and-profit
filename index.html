@@ -148,7 +148,106 @@ brew install php70 --with-phpdbg
 				<section>
 					<section id="using-phpdbg">
 						<aside class="notes">
-							
+							Let's look at how to use phpdbg, starting with how to start it.
+						</aside>
+					</section>
+
+					<section id="startup">
+						<code class="terminal">aharvey@aharvey-mbp:/tmp$ phpdbg code/fizzbuzz.php
+<span class="green">[Welcome to phpdbg, the interactive PHP debugger, v0.5.0]</span>
+To get help using phpdbg type "help" and press enter
+<span class="green">[Please report bugs to &lt;http://bugs.php.net/report.php&gt;]
+[Successful compilation of /tmp/code/fizzbuzz.php]</span>
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							We saw this in screenshot form briefly earlier. Like PHP CLI, we
+							provide a file name. (You don't have to, but I like to.) However,
+							instead of starting the script immediately, phpdbg just starts
+							the Zend Engine and gives us a prompt. Help will give us&hellip;
+						</aside>
+					</section>
+
+					<section id="help?">
+						<img src="images/help.png">
+						<aside class="notes">
+							Ack! Luckily, it's not that bad. I'm not going to cover
+							everything, but I'm going to cover the immediately useful stuff
+							through a couple of examples.
+						</aside>
+					</section>
+
+					<section id="run">
+						<code class="terminal" style="font-size: 0.8em">prompt&gt; help run
+Command: <strong>run</strong>  Alias: <strong>r  attempt execution</strong>
+
+Enter the vm, starting execution. Execution will then continue until the next
+breakpoint or completion of the script. Add parameters you want to use as $argv
+
+<strong>Examples</strong>
+
+    prompt&gt;  run
+    prompt&gt;  r
+    Will cause execution of the context, if it is set
+
+    prompt&gt;  r test
+    Will execute with $argv[1] == "test"
+
+Note that the execution context must be set. If not previously compiled, then
+the script will be compiled before execution.
+
+Note that attempting to run a script that is already executing will result in
+an "execution in progress" error.
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							To start with: let's look at run. Again, there's a bit too much
+							for a slide, but what I want to point out is the overall
+							structure: each command has online help that includes its
+							aliases, what it does, and examples. Let's look at each part in
+							turn. (I won't do this for all the commands, but it's important
+							to know how to read the help.)
+						</aside>
+					</section>
+
+					<section id="run-description">
+						<code class="terminal">prompt&gt; help run
+Command: <strong>run</strong>  Alias: <strong>r  attempt execution</strong>
+
+Enter the vm, starting execution. Execution will then
+continue until the next breakpoint or completion of the
+script. Add parameters you want to use as $argv</code>
+						<aside class="notes">
+							This tells us that the command can also be called with a straight
+							"r", or "attempt execution", and then describes what it does.
+						</aside>
+					</section>
+
+					<section id="run-examples">
+						<code class="terminal"><strong>Examples</strong>
+
+    prompt&gt;  run
+    prompt&gt;  r
+    Will cause execution of the context, if it is set
+
+    prompt&gt;  r test
+    Will execute with $argv[1] == "test"</code>
+						<aside class="notes">
+							Here are the examples. Note that this command takes optional
+							arguments: in this case, "test" is the same as running "php
+							fizzbuzz.php test".
+						</aside>
+					</section>
+
+					<section id="run-notes">
+						<code class="terminal">Note that the execution context must be set. If not
+previously compiled, then the script will be compiled
+before execution.
+
+Note that attempting to run a script that is already
+executing will result in an "execution in progress" error.</code>
+						<aside class="notes">
+							Finally, we have some general notes. The execution context is the
+							file that's the entry point. And we can't run a script if another
+							script is executing, which is pretty common sense.
 						</aside>
 					</section>
 				</section>
