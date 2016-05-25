@@ -60,7 +60,9 @@
 					<section id="cli-debugger">
 						<h2>Command line debugger</h2>
 						<aside class="notes">
-							It's a command line debugger, like gdb or lldb.
+							It's a command line debugger, like gdb or lldb. It was originally
+							written by Joe Watkins and Felipe Pena, and has also seen
+							significant input from Bob Weinand.
 						</aside>
 					</section>
 
@@ -248,6 +250,493 @@ executing will result in an "execution in progress" error.</code>
 							Finally, we have some general notes. The execution context is the
 							file that's the entry point. And we can't run a script if another
 							script is executing, which is pretty common sense.
+						</aside>
+					</section>
+
+					<section id="run-it">
+						<code class="terminal">prompt&gt; run 15</code>
+						<aside class="notes">
+							The script that I loaded is a FizzBuzz implementation, and it
+							takes the maximum number as an argument. So let's run it.
+						</aside>
+					</section>
+
+					<section id="ran-it">
+						<code class="terminal">prompt&gt; run 15
+1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 Fizz
+<span class="green">[Script ended normally]</span>
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							Two things. Firstly, you can see that we got output, and then it
+							ended. Secondly, I've committed one of the classic blunders, and
+							I'm not talking about starting a land war in Asia. See that last
+							"Fizz"?
+						</aside>
+					</section>
+
+					<section id="fizz">
+						<pre><code class="php" data-trim style="font-size: 2em">
+function fizzbuzz(int $n): string {
+  if (0 == ($n % 3)) {
+    return 'Fizz';
+  } elseif (0 == ($n % 5)) {
+    return 'Buzz';
+  }
+  return (string) $n;
+}
+
+foreach (range(1, (int) $_SERVER['argv'][1]) as $n) {
+  echo fizzbuzz($n).' ';
+}
+echo "\n";
+						</code></pre>
+						<aside class="notes">
+							Here's my script. The bug is very obvious, but let's see how we'd
+							attack this with a debugger. We know that we call fizzbuzz() for
+							each number, and we know that the output for 15 seems wrong.
+						</aside>
+					</section>
+
+					<section id="breakpoints">
+						<code class="terminal">prompt&gt; help break
+Command: <strong>break</strong>  Alias: <strong>b  set breakpoint</strong>
+
+Breakpoints can be set at a range of targets within the
+execution environment.  Execution will be paused if the
+program flow hits a breakpoint.</code>
+						<aside class="notes">
+							As those of you who've used debuggers before know, the biggest
+							single tool you have is breakpoints. Effectively, you're going to
+							tell the runtime to stop when a certain condition is met. In
+							traditional debuggers, that's usually when execution hits a
+							particular line, or a particular function. phpdbg has a break
+							command that sets a breakpoint.
+						</aside>
+					</section>
+
+					<section id="basic-breakpoints">
+						<code class="terminal">prompt&gt; break 3
+<span class="green">[Breakpoint #0 added at /tmp/code/fizzbuzz.php:3]</span>
+prompt&gt; break fizzbuzz.php:3
+<span class="green">[Breakpoint #0 added at /tmp/code/fizzbuzz.php:3]</span>
+prompt&gt; break fizzbuzz
+<span class="green">[Breakpoint #1 added at fizzbuzz]</span></code>
+						<aside class="notes">
+							The basics are well, basic. You can set a breakpoint on a line
+							alone (for the current file), a file and line (phpdbg is smart
+							enough in this case to know it's the same one), or a function.
+							"help break" covers the full range of syntax options: methods are
+							also included.
+						</aside>
+					</section>
+
+					<section id="what-is-broken-may-never-die">
+						<code class="terminal">prompt&gt; run 15
+<span class="green">[Breakpoint #0 at /tmp/code/fizzbuzz.php:3, hits: 1]</span>
+&gt;00003:   if (0 == ($n % 3)) {
+ 00004:     return 'Fizz';
+ 00005:   } elseif (0 == ($n % 5)) {
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							With our newly set breakpoints, let's run the script! And, of
+							course, it breaks right away, since we enter fizzbuzz() each time
+							we have a value. We get this helpful source display, and we
+							presumably want to know what $n is.
+						</aside>
+					</section>
+
+					<section id="eval-is-evil?">
+						<code class="terminal">prompt&gt; help ev
+Command: <strong>ev</strong>  Alias:
+The <strong>ev</strong> command takes a string expression which it evaluates
+and then displays. It evaluates in the context of the
+lowest (that is the executing) frame, unless this has
+first been explicitly changed by issuing a frame command.</code>
+						<aside class="notes">
+							phpdbg lets us evaluate code, which can be as simple as
+							evaluating a variable. The nifty thing is that it evaluates it in
+							the current context, so we can evaluate $n, even though it's a
+							local variable.
+						</aside>
+					</section>
+
+					<section id="one-potato">
+						<code class="terminal">prompt&gt; ev $n
+1
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							OK, $n is 1. We're pretty sure that works. We can tell the script
+							to continue.
+						</aside>
+					</section>
+
+					<section id="two-potato">
+						<code class="terminal">prompt&gt; continue
+1
+<span class="green">[Breakpoint #0 at /tmp/code/fizzbuzz.php:3, hits: 2]</span>
+&gt;00003:   if (0 == ($n % 3)) {
+ 00004:     return 'Fizz';
+ 00005:   } elseif (0 == ($n % 5)) {
+prompt&gt; ev $n
+2
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							We continue. (The continue command resumes execution.) We see a
+							"1", which is output from the script, then we break again. This
+							time $n is 2. We're pretty sure that's OK too. Hmmm. Let's go
+							back to the breakpoint help.
+						</aside>
+					</section>
+
+					<section id="what-else-you-got">
+						<code class="terminal"><strong>Examples</strong>
+						
+    prompt&gt;  break at phpdbg::isGreat if $opt == 'S'
+    prompt&gt;  break @ phpdbg::isGreat if $opt == 'S'
+    Break at any opcode in phpdbg::isGreat when the
+condition ($opt == 'S') is true</code>
+						<aside class="notes">
+							There are many, many examples, but this one catches my eye. We
+							know we're interested in fizzbuzz(), and we know we're interested
+							only really in a special case: when $n is 15.
+						</aside>
+					</section>
+
+					<section id="conditional-breakpoints">
+						<code class="terminal">prompt&gt; break del 0
+<span class="green">[Deleted breakpoint #0]</span>
+prompt&gt; break at fizzbuzz if $n == 15
+<span class="green">[Conditional breakpoint #1 added $n == 15/0x10a668300]</span>
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							Let's change it up a little. We'll delete our original
+							breakpoint, and set a new, conditional breakpoint that only
+							triggers when we enter fizzbuzz() and $n is 15. (That can be any
+							valid PHP expression.)
+						</aside>
+					</section>
+
+					<section id="case-15">
+						<code class="terminal">prompt&gt; continue
+2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14
+<span class="green">[Conditional breakpoint #1: at fizzbuzz if $n == 15 at
+/tmp/code/fizzbuzz.php:3, hits: 1]</span>
+&gt;00003:   if (0 == ($n % 3)) {
+ 00004:     return 'Fizz';
+ 00005:   } elseif (0 == ($n % 5)) {
+prompt&gt; ev $n
+15
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							And here we are! This is the case we care about. From here, we
+							don't want to just continue, but we want to step through the
+							code.
+						</aside>
+					</section>
+
+					<section id="step">
+						<code class="terminal">prompt&gt; help step
+Command: <strong>step</strong>  Alias: <strong>s  step through execution</strong>
+
+Execute opcodes until next line
+
+<strong>Examples</strong>
+
+    prompt&gt;  s
+    Will continue and break again in the next encountered
+line</code>
+						<aside class="notes">
+							Again, like pretty much every debugger ever, phpdbg has a step
+							command. It just continues execution until the next line.
+						</aside>
+					</section>
+
+					<section id="cut-a-hole-in-the-box">
+						<code class="terminal">prompt&gt; step
+<span class="green">[L3          0x10a67a040 IS_EQUAL                0                    ~0                   ~1                   /tmp/code/fizzbuzz.php]
+[Conditional breakpoint #1: at fizzbuzz if $n == 15 at /tmp/code/fizzbuzz.php:3, hits: 2]</span>
+&gt;00003:   if (0 == ($n % 3)) {
+ 00004:     return 'Fizz';
+ 00005:   } elseif (0 == ($n % 5)) {
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							Now we're actually executing the line we broke on. There's the
+							opcode that's being executed last on that line (there's also a
+							MOD, but that's happened by this point) and where we are.
+						</aside>
+					</section>
+
+					<section id="code-of-conduct-prevents-me-from-including-this-joke">
+						<code class="terminal">prompt&gt; step
+<span class="green">[L4          0x10a67a080 RETURN                  "Fizz"                                                         /tmp/code/fizzbuzz.php]</span>
+&gt;00004:     return 'Fizz';
+ 00005:   } elseif (0 == ($n % 5)) {
+ 00006:     return 'Buzz';
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							Step again, and we see the problem. We're about to return, and
+							we're just returning "Fizz", not "FizzBuzz". Well, shit.
+						</aside>
+					</section>
+
+					<section id="profit?">
+						<code class="terminal">prompt&gt; step
+<span class="green">[L12         0x10a6801c0 CONCAT                  @6                   " "                  ~7                   /tmp/code/fizzbuzz.php]</span>
+&gt;00012:   echo fizzbuzz($n).' ';
+ 00013: }
+ 00014: echo "\n";
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							If we step again, we see we're indeed back out of the function,
+							and we returned the wrong thing. Guess we should add a mod 15
+							case, eh?
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section id="exceptional">
+						<code class="terminal">aharvey@aharvey-mbp:/tmp$ phpdbg code/exception.php
+<span class="green">[Welcome to phpdbg, the interactive PHP debugger, v0.5.0]</span>
+To get help using phpdbg type "help" and press enter
+<span class="green">[Please report bugs to &lt;http://bugs.php.net/report.php&gt;]</span>
+<span class="green">[Successful compilation of /tmp/code/exception.php]</span>
+prompt&gt; r
+<span class="red">[Uncaught TableFlipException in /tmp/code/exception.php on line 5: ruh roh]</span>
+&gt;00005:   throw new TableFlipException('ruh roh');
+ 00006: }
+ 00007:
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							Before we move onto a slightly more involved example, here's
+							another case where phpdbg will stop execution: exceptions. The
+							nice thing here is that phpdbg goes back to the point where the
+							exception is thrown.
+						</aside>
+					</section>
+
+					<section id="exception-handler">
+						<pre><code class="php" data-trim>
+class TableFlipException extends Exception {}
+
+function （╯°□°）╯︵ ┻━┻() {
+  throw new TableFlipException('ruh roh');
+}
+
+set_exception_handler(function ($e) { echo $e; });
+
+（╯°□°）╯︵ ┻━┻();
+						</code></pre>
+						<aside class="notes">
+							The really useful (and interesting) part is that this still works
+							even if you have an exception handler installed. It won't stop if
+							you have a catch block, but if it makes it all the way to the
+							exception handler, phpdbg will stop. That's fine, as long as you
+							don't use exceptions for flow control, right?
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section id="phptek-tweeps">
+						<h2>
+							<a href="https://github.com/LawnGnome/phptek-tweeps">
+								<span class="octicon octicon-mark-github"></span>
+								<br>
+								<code>LawnGnome/phptek-tweeps</code>
+							</a>
+						</h2>
+						<aside class="notes">
+							Let's look at a more real example. Here is a project called
+							phptek/tweeps. It's on GitHub! It's written in Laravel! It uses
+							façades! It must be good, right? Basically, this allows me to
+							scrape the accounts and user names of people who tweet about
+							#phptek because REASONS.
+						</aside>
+					</section>
+
+					<section id="insert-evil-laugh-here">
+						<code class="terminal">aharvey@aharvey-mbp:~/Trees/phptek-tweeps$ ./artisan tweeps:update
+Setting the name of SandyS1 to Sandy Smith
+Setting the name of phparch to php[architect]
+Setting the name of glasnt to Katie McLaughlin
+Setting the name of enygma to Chris Cornutt
+Setting the name of nomadphp to Nomad PHP
+Setting the name of ramsey to Ben Ramsey
+Setting the name of LGnome to Adam Harvey
+Setting the name of asgrim to Asgrimy McAsgrimface
+
+Muahahahahaha!</code>
+						<aside class="notes">
+							Obviously, this needs to monitor the search, so I've written an
+							Artisan command that does just that. It looks like this. This is
+							actual output, folks. Be afraid.
+						</aside>
+					</section>
+
+					<section id="my-precious-evil-plan">
+						<code class="terminal">aharvey@aharvey-mbp:~/Trees/phptek-tweeps$ ./artisan tweeps:update
+Setting the name of developerjack to Jack Skinner'; --...
+
+<div class="red-background">
+  [Illuminate\Database\QueryException]
+  SQLSTATE[42000]: Syntax error or access violation: 1064
+   You have an error in your SQL syntax; check the manual
+   that corresponds to your MariaDB server version for th
+  e right syntax to use near '; --')' at line 1 (SQL: REP
+  LACE INTO tweeps (account, name) VALUES ('developerjack
+  ', 'Jack Skinner'; --'))
+
+</div></code>
+						<aside class="notes">
+							However, then it started breaking. That's not good. Note that,
+							while artisan actually outputs two exceptions here (I've omitted
+							the second one for brevity), neither of them actually tell you
+							where the exception occurred.
+						</aside>
+					</section>
+
+					<section id="phpdbg-to-the-rescue">
+						<code class="terminal">aharvey@aharvey-mbp:~/Trees/phptek-tweeps$ phpdbg artisan
+<span class="green">[Welcome to phpdbg, the interactive PHP debugger, v0.5.0]</span>
+To get help using phpdbg type "help" and press enter
+<span class="green">[Please report bugs to &lt;http://bugs.php.net/report.php&gt;]</span>
+<span class="green">[Successful compilation of /Users/aharvey/Trees/phptek-tweeps/artisan]</span>
+prompt&gt; run tweeps:update
+Setting the name of developerjack to Jack Skinner'; --...
+
+<div class="red-background">[Illuminate\Database\QueryException]
+	...
+</div>
+<span class="green">[Script ended normally]</span>
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							phpdbg to the rescue? Let's see. Well, that wasn't helpful. The
+							problem is that the exception is being caught, so we still have
+							no idea how to figure out where it's coming from. Aargh!
+						</aside>
+					</section>
+
+					<section id="break-what-now">
+						<code class="terminal">    prompt&gt;  break ZEND_ADD
+    prompt&gt;  b ZEND_ADD
+    Break on any occurrence of the opcode ZEND_ADD</code>
+						<aside class="notes">
+							Let's delve back into the breakpoint help. Conditional
+							breakpoints were cool. Maybe there's something else. And lo and
+							behold, we find this! Adds aren't cool, but you know what is
+							cool?
+						</aside>
+					</section>
+
+					<section id="throw">
+						<pre><code class="c" data-trim>
+#define ZEND_THROW                           108
+						</code></pre>
+						<aside class="notes">
+							(Sorry, I am contractually required to have at least one slide of
+							C in each talk.) ZEND_THROW is the opcode used when an exception
+							is being thrown. So let's try breaking on that.
+						</aside>
+					</section>
+
+					<section id="break-throw">
+						<code class="terminal">prompt&gt; break ZEND_THROW
+<span class="green">[Breakpoint #0 added at ZEND_THROW]</span>
+prompt&gt; run tweeps:update
+Setting the name of developerjack to Jack Skinner'; --...
+<span class="green">[Breakpoint #0 in ZEND_THROW at /Users/aharvey/Trees/phptek-tweeps/vendor/laravel/framework/src/Illuminate/Database/Connection.php:714, hits: 1]</span>
+ 00713:             throw new QueryException(
+&gt;00714:                 $query, $this-&gt;prepareBindings($bindings), $e
+ 00715:             );
+ 00716:         }
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							Success! We're now at the point the exception is thrown. (I've
+							included the previous line just for context.) Unfortunately, it's
+							pretty deep in Laravel. So let's now look at the last piece of
+							the debugger puzzle: the stack trace.
+						</aside>
+					</section>
+
+					<section id="help-back">
+						<code class="terminal">prompt&gt; help back
+Command: <strong>back</strong>  Alias: <strong>t  show trace</strong>
+
+Provide a formatted backtrace using the standard
+debug_backtrace() functionality.  An optional unsigned
+integer argument specifying the maximum number of frames
+to be traced; if omitted then a complete backtrace is
+given.</code>
+						<aside class="notes">
+							Here's the help for the back command, which prints the current
+							stack trace.
+						</aside>
+					</section>
+
+					<section id="backtrace">
+						<code class="terminal">prompt&gt; back
+...
+frame #5: App\Console\Commands\UpdateTweeps-&gt;updateTweep(account="developerjack", name="Jack Skinner'; --") at /Users/aharvey/Trees/phptek-tweeps/app/Console/Commands/UpdateTweeps.php:62
+...
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							The stack trace is 16 frames deep at this point, but here's the
+							first one that's not a function in a vendor directory. Now, we
+							could just look at the code, but we can actually switch to that
+							frame and examine its local variables with the frame command.
+						</aside>
+					</section>
+
+					<section id="help-frame">
+						<code class="terminal">prompt&gt; help frame
+Command: <strong>frame</strong>  Alias: <strong>f  switch to a frame</strong>
+
+The <strong>frame</strong> takes an optional integer argument. If omitted,
+then the current frame is displayed If specified then the
+current scope is set to the corresponding frame listed in
+a <strong>back</strong> trace. This can be used to allowing access to the
+variables in a higher stack frame than that currently
+being executed.</code>
+						<aside class="notes">
+							Here's the frame command. In our case, we know that it's frame 5,
+							so let's do that.
+						</aside>
+					</section>
+
+					<section id="frame-5">
+						<code class="terminal">prompt&gt; frame 5
+<span class="green">[Switched to frame #5]</span>
+&gt;00062:         DB::statement("REPLACE INTO tweeps (account, name) VALUES ('$account', '$name')");
+ 00063:     }
+ 00064: }
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							Here's the updateTweep() method. Ah. That doesn't look like best
+							practice.
+						</aside>
+					</section>
+
+					<section id="he-is-living-comfort-eagle">
+						<code class="terminal">prompt&gt; ev $name
+Jack Skinner'; --
+prompt&gt; ev $_ = "REPLACE INTO tweeps (account, name) VALUES ('$account', '$name')"
+REPLACE INTO tweeps (account, name) VALUES ('developerjack', 'Jack Skinner'; --')
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							Let's look at the local $name and evaluate the string just to
+							confirm our suspicions. (The awkward $_ is because of a
+							limitation in phpdbg's command parser: a double quote straight
+							after a command is assumed to be a parameter delimiter, and isn't
+							passed to ev.)
+						</aside>
+					</section>
+
+					<section id="sql-injection-strikes-again">
+						<aside class="notes">
+							Little Bobby Tables&hellip; er, developerjack teaches us once
+							again that parameterised queries are a good thing. (Sorry,
+							Colin.)
 						</aside>
 					</section>
 				</section>

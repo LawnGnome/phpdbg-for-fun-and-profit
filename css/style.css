@@ -61,7 +61,8 @@
 /* Terminal handling. Max width is 60 characters. */
 .reveal code.terminal {
   display: block;
-  white-space: pre;
+  white-space: pre-wrap;
+  word-wrap: break-word;
   text-align: left;
   background: #3f3f3f;
   color: #dcdcdc;
@@ -70,6 +71,15 @@
 
 .reveal code.terminal .green {
   color: LightGreen;
+}
+
+.reveal code.terminal .red {
+  color: #f66;
+}
+
+.reveal code.terminal .red-background {
+  background: #f66;
+  color: black;
 }
 
 .reveal code.terminal .cursor:before {

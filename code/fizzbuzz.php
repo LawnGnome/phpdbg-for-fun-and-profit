@@ -1,12 +1,9 @@
 <?php
-
 function fizzbuzz($n) {
-  if (0 == ($n % 15)) {
-    return 'FizzBuzz';
+  if (0 == ($n % 3)) {
+    return 'Fizz';
   } elseif (0 == ($n % 5)) {
     return 'Buzz';
-  } elseif (0 == ($n % 3)) {
-    return 'Fizz';
   }
   return (string) $n;
 }

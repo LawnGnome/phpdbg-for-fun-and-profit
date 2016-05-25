@@ -22,6 +22,8 @@ Homebrew includes an option in PHP 5.4+. (check if default)
 
 Start with a really contrived case (FizzBuzz handler)
 
+Handling uncaught exceptions (including going back up a frame to examine the state)
+
 ### Web case
 
 Adapter atop a front controller. (example in phpdbg docs; write a small package)
@@ -29,6 +31,8 @@ Adapter atop a front controller. (example in phpdbg docs; write a small package)
 ## Using it with PHPUnit
 
 Code coverage.
+
+## Opcodes
 
 ## IDEs
 
