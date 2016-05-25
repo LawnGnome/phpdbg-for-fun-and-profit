@@ -67,13 +67,23 @@
 					</section>
 
 					<section id="cli-debugging-example">
-						<img src="images/example.png">
-						<p class="todo">
-							Replace with video?
-						</p>
+						<code class="terminal">aharvey@aharvey-mbp:/tmp$ phpdbg code/fizzbuzz.php
+<span class="green">[Welcome to phpdbg, the interactive PHP debugger, v0.5.0]</span>
+To get help using phpdbg type "help" and press enter
+<span class="green">[Please report bugs to &lt;http://bugs.php.net/report.php&gt;]
+[Successful compilation of /tmp/code/fizzbuzz.php]</span>
+prompt&gt; break fizzbuzz
+<span class="green">[Breakpoint #0 added at fizzbuzz]</span>
+prompt&gt; run 15
+<span class="green">[Breakpoint #0 at /tmp/code/fizzbuzz.php:3, hits: 1]</span>
+&gt;00003:   if (0 == ($n % 3)) {
+ 00004:     return 'Fizz';
+ 00005:   } elseif (0 == ($n % 5)) {
+prompt&gt; <span class="cursor"></span></code>
 						<aside class="notes">
 							Practically, that means that you control it via commands in the
-							terminal, like so.
+							terminal, like so. This is an example that we'll walk through in
+							a few minutes.
 						</aside>
 					</section>
 
