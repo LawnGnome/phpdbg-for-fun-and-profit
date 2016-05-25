@@ -15,6 +15,16 @@
   font-family: Inconsolata, monospace;
 }
 
+.reveal pre code {
+  font-size: 2.2em;
+  line-height: 1.4;
+  max-height: 40em;
+}
+
+.reveal a {
+  color: #24396b;
+}
+
 .reveal ul {
   list-style: none;
   margin-left: 0;

@@ -75,11 +75,68 @@
 						</aside>
 					</section>
 
-					<section id="unlike-xdebug">
+					<section id="not-xdebug">
 						<aside class="notes">
 							This does mean that your script is not running in a Web server
 							like xdebug, and your output isn't going to go to a browser.
 							We'll talk about that later.
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section id="getting-phpdbg">
+						<aside class="notes">
+							Let's talk about getting phpdbg. Unlike XDebug and most other
+							debugging and profiling tools for PHP, it's not an extension, but
+							rather a different SAPI. (Explain SAPIs.)
+						</aside>
+					</section>
+
+					<section id="debian-ubuntu">
+						<h2>Debian and Ubuntu</h2>
+						<pre><code class="sh" data-trim>
+apt-get install php5-phpdbg
+apt-get install php7.0-phpdbg
+						</code></pre>
+						<aside class="notes">
+							On Debian and Ubuntu, there are packages available in recent
+							versions: in practice, that means Vivid, Wily and Xenial for
+							Ubuntu and Jessie for Debian.
+						</aside>
+					</section>
+
+					<section id="rhel-centos">
+						<h2>Red Hat and CentOS</h2>
+						<pre><code class="sh" data-trim>
+yum install ??
+						</code></pre>
+						<aside class="notes">
+							On Red Hat, you're looking at something.
+						</aside>
+					</section>
+
+					<section id="osx">
+						<h2>Mac OS X</h2>
+						<pre><code class="sh" data-trim>
+brew tap homebrew/php
+brew install php70 --with-phpdbg
+						</code></pre>
+						<aside class="notes">
+							The Homebrew PHP tap includes phpdbg packages for PHP 5.4 and
+							later. MAMP&hellip; well, don't use MAMP.
+						</aside>
+					</section>
+
+					<section id="source">
+						<h2>From source</h2>
+						<pre><code class="sh" data-trim>
+./configure --enable-phpdbg
+						</code></pre>
+						<aside class="notes">
+							Finally, if you're building from source (good for you!), it's
+							bundled from PHP 5.6. You just need to add one switch to
+							configure on PHP 5.6. On PHP 7.0, you'll get phpdbg by default.
 						</aside>
 					</section>
 				</section>

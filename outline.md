@@ -31,3 +31,7 @@ Adapter atop a front controller. (example in phpdbg docs; write a small package)
 Code coverage.
 
 ## IDEs
+
+## Comparison to XDebug (when to use it?)
+
+## Questions, etc
