@@ -593,7 +593,6 @@ set_exception_handler(function ($e) { echo $e; });
 						<h2>
 							<a href="https://github.com/LawnGnome/phptek-tweeps">
 								<span class="octicon octicon-mark-github"></span>
-								<br>
 								<code>LawnGnome/phptek-tweeps</code>
 							</a>
 						</h2>
@@ -788,6 +787,169 @@ prompt&gt; <span class="cursor"></span></code>
 							Little Bobby Tables&hellip; er, developerjack teaches us once
 							again that parameterised queries are a good thing. (Sorry,
 							Colin.)
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section id="web">
+						<aside class="notes">
+							All that's good, but most of us spend more time on web sites than
+							CLI scripts. (Sorry, Cal.) How can we deal with that?
+						</aside>
+					</section>
+
+					<section id="choices">
+						<aside class="notes">
+							There are a couple of approaches. One, which is documented on the
+							phpdbg site, is to fake a request by setting the superglobals and
+							then delegating to the entry point for your framework or
+							application. Another is to use phpdbg webhelper.
+						</aside>
+					</section>
+
+					<section id="fake-request">
+						<h2>
+							<a href="https://github.com/LawnGnome/phpdbg-fake-request">
+								<span class="octicon octicon-mark-github"></span>
+								<code>LawnGnome/phpdbg-fake-request</code>
+							</a>
+							<br>
+							<a href="https://packagist.org/packages/lawngnome/phpdbg-fake-request">
+								<img class="inline" src="images/packagist.png" alt="Packagist">
+								<code>lawngnome/phpdbg-fake-request</code>
+							</a>
+						</h2>
+						<aside class="notes">
+							For convenience's sake, I've bundled the first approach into a
+							script and accompanying library that you can install from
+							Packagist. It's rough, and PHP 7.0 only, but it works.
+						</aside>
+					</section>
+
+					<section id="web-example" data-background="images/page1.png">
+						<aside class="notes">
+							Let's look at the web interface for the phptek tweeps
+							application. It can't be as bad as the artisan command, right?
+							Page one looks good. Lots of cool people there. Let's go to page
+							two&hellip;
+						</aside>
+					</section>
+
+					<section id="page2" data-background="images/page2.png">
+						<aside class="notes">
+							Hmmm. Let's zoom in&hellip;
+						</aside>
+					</section>
+
+					<section id="hax0r" data-background="images/page2.png">
+						<img src="images/page2-zoomed.png" alt="I PWNED U NOOB LOLX0RZ">
+						<aside class="notes">
+							Ah.
+						</aside>
+					</section>
+
+					<section id="html">
+						<pre><code class="html" data-trim>
+&lt;tr&gt;
+&lt;td&gt;nefarioushax0r&lt;/td&gt;
+&lt;td&gt;&lt;script&gt;alert("I PWNED U NOOB LOLX0RZ")&lt;/script&gt;&lt;/td&gt;
+&lt;/tr&gt;
+						</code></pre>
+						<aside class="notes">
+							Here's an excerpt from the HTML. Well, there's your problem. But
+							how's the script tag ending up in the HTML in the first place?
+							phpdbg to the rescue!
+						</aside>
+					</section>
+
+					<section id="url">
+						<h2><code>http://127.0.0.1:9000/?page=2</code></h2>
+						<aside class="notes">
+							Since this is a web page, we need to attack this differently.
+							First, here's the URL in question. We can't just feed this to
+							phpdbg without a wrapper, since this behaviour only occurs on the
+							second page, which we can only get to with a get variable.
+						</aside>
+					</section>
+
+					<section id="starting-fake-request">
+						<code class="terminal">aharvey@aharvey-mbp:~/Trees/phptek-tweeps$ phpdbg ./vendor/bin/fake-request GET / public/index.php -g page=2
+<span class="green">[Welcome to phpdbg, the interactive PHP debugger, v0.5.0]</span>
+To get help using phpdbg type "help" and press enter
+<span class="green">[Please report bugs to &lt;http://bugs.php.net/report.php&gt;]</span>
+<span class="green">[Successful compilation of /Users/aharvey/Trees/phptek-tweeps/vendor/lawngnome/phpdbg-fake-request/bin/fake-request]</span>
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							We'll start up the fake-request script. (The phpdbg is optional,
+							since the shebang also includes phpdbg.) So far, so normal, but
+							note that we've provided the request method, action, entry point
+							and get variable on the command line.
+						</aside>
+					</section>
+
+					<section id="wheres-the-break">
+						<code class="terminal">prompt&gt; break routes.php:15
+<span class="green">[Pending breakpoint #0 added at routes.php:15]</span>
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							The question is where to stop execution. In this case, I've added
+							a break point at the first line of the anonymous function that's
+							the controller. Seems reasonable, since we know it's not the
+							framework. It's pending because that file hasn't been loaded yet,
+							but that's OK. phpdbg is smart enough to wait for it to be
+							included.
+						</aside>
+					</section>
+
+					<section id="getting-warmer">
+						<code class="terminal">prompt&gt; run
+<span class="green">[Breakpoint #0 at /src/app/Http/routes.php:15, hits: 1]</span>
+&gt;00015:     $tweeps = DB::table('tweeps')-&gt;paginate(30);
+ 00016:     ob_start();
+ 00017:
+prompt&gt; next
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							OK, we're in. Looking at the function in my text editor of choice
+							(vim forever!), I can see that the only place we generate table
+							rows is based on a loop variable called $tweep, and the second
+							cell is always from $tweep-&gt;name. So let's add a conditional
+							breakpoint looking for part of what was in the HTML.
+						</aside>
+					</section>
+
+					<section id="">
+						<code class="terminal">prompt&gt; break if strpos($tweep-&gt;name, 'alert')
+<span class="green">[Conditional breakpoint #1 added strpos($tweep-&gt;name, 'alert')/0x7f46430a8460]</span>
+prompt&gt; continue
+<span class="green">[Conditional breakpoint #1: on strpos($tweep-&gt;name, 'alert') == true at /src/app/Http/routes.php:46, hits: 1]</span>
+&gt;00046:               &lt;td&gt;&lt;?= $tweep-&gt;account ?&gt;&lt;/td&gt;
+ 00047:               &lt;td&gt;&lt;?= $tweep-&gt;name ?&gt;&lt;/td&gt;
+ 00048:             &lt;/tr&gt;
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							You may remember that I said earlier that conditional breakpoints
+							would accept any PHP expression. Let's use that here with strpos.
+							Add the breakpoint, continue execution, and&hellip; well, that
+							seems pretty damning. We're just echoing the values straight out.
+						</aside>
+					</section>
+
+					<section id="you-sneaky-hacker">
+						<code class="terminal">prompt&gt; ev $tweep
+stdClass Object
+(
+    [account] =&gt; nefarioushax0r
+    [name] =&gt; &lt;script&gt;alert("I PWNED U NOOB LOLX0RZ")&lt;/script&gt;
+)
+						
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							Just to be sure, here's the $tweep variable. That name is
+							definitely going to cause problems. I guess we should use a
+							templating engine. Or at least call htmlspecialchars(), since PHP
+							is a templating engine.
 						</aside>
 					</section>
 				</section>

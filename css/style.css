@@ -30,9 +30,21 @@
   margin-left: 0;
 }
 
+.reveal img.inline, .reveal a:hover img.inline {
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+  width: 1em;
+  display: inline-block;
+  vertical-align: bottom;
+}
+.reveal a:hover img.inline {
+  opacity: 0.5;
+}
+
 .octicon {
   font-family: octicons !important;
-  font-size: 2em !important;
+  font-size: 1em !important;
   font-weight: normal !important;
 }
 
@@ -100,6 +112,12 @@
 /* Slides with specific background images have their opacity crunched down. */
 .backgrounds .stack div[style*="background-image"].slide-background.present {
   opacity: 0.15;
+}
+
+/* Hacky workaround for the web example. */
+.backgrounds .stack div[style*="background-image"][data-background-hash*="page1.png"].slide-background.present,
+.backgrounds .stack div[style*="background-image"][data-background-hash*="page2.png"].slide-background.present {
+  opacity: 1;
 }
 
 /* Slide specific styles. */
