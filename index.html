@@ -908,11 +908,31 @@ prompt&gt; <span class="cursor"></span></code>
 &gt;00015:     $tweeps = DB::table('tweeps')-&gt;paginate(30);
  00016:     ob_start();
  00017:
-prompt&gt; next
 prompt&gt; <span class="cursor"></span></code>
 						<aside class="notes">
-							OK, we're in. Looking at the function in my text editor of choice
-							(vim forever!), I can see that the only place we generate table
+							OK, we're in. We can use the list command to examine the function, but I'm going to just show you the highlights on the next slide. Looking at the function in my text editor of choice
+						</aside>
+					</section>
+
+					<section id="da-controller">
+						<pre><code class="" data-trim>
+Route::get('/', function () {
+    $tweeps = DB::table('tweeps')-&gt;paginate(30);
+    ob_start();
+?&gt;
+...
+&lt;?php foreach ($tweeps as $tweep): ?&gt;&lt;tr&gt;
+	&lt;td&gt;&lt;?= $tweep-&gt;account ?&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;?= $tweep-&gt;name ?&gt;&lt;/td&gt;
+&lt;/tr&gt;&lt;?php endforeach ?&gt;
+...
+&lt;?php
+    return ob_get_clean();
+});
+						</code></pre>
+						<aside class="notes">
+							Here's a cut down version of the controller. (Mostly to keep it
+							on one screen.) I can see that the only place we generate table
 							rows is based on a loop variable called $tweep, and the second
 							cell is always from $tweep-&gt;name. So let's add a conditional
 							breakpoint looking for part of what was in the HTML.
