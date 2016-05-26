@@ -7,13 +7,16 @@ Several assets used in this talk are licensed differently. These are:
 
 ## Fonts
 
-### Apache License
-
-* [Open Sans](https://www.google.com/fonts/specimen/Open+Sans)
-
 ### SIL Open Font License
 
-* [Amaranth](https://www.google.com/fonts/specimen/Amaranth)
-* [Creepster](https://www.google.com/fonts/specimen/Creepster)
-* [Quicksand](https://www.google.com/fonts/specimen/Quicksand)
-* [Source Code Pro](https://www.google.com/fonts/specimen/Source+Code+Pro)
+* [Inconsolata](http://www.levien.com/type/myfonts/inconsolata.html)
+* [Lato](http://www.latofonts.com/)
+
+## Images
+
+Please refer to
+[the image credits slide](https://lawngnome.github.io/phpdbg-for-fun-and-profit/#/image-credits)
+for up to date details based on the [image metadata](images.json).
+
+Images not listed in that file are (C) Adam Harvey, and licensed as CC-BY 4.0,
+as with the slides.
