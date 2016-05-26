@@ -85,6 +85,11 @@
   color: LightGreen;
 }
 
+.reveal code.terminal .green-background {
+  background: LightGreen;
+  color: black;
+}
+
 .reveal code.terminal .red {
   color: #f66;
 }
@@ -115,6 +120,7 @@
 }
 
 /* Hacky workaround for the web example. */
+.backgrounds .stack div[style*="background-image"][data-background-hash*="coverage.png"].slide-background.present,
 .backgrounds .stack div[style*="background-image"][data-background-hash*="page1.png"].slide-background.present,
 .backgrounds .stack div[style*="background-image"][data-background-hash*="page2.png"].slide-background.present {
   opacity: 1;

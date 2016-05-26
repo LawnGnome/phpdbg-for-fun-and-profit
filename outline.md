@@ -28,8 +28,6 @@ Handling uncaught exceptions (including going back up a frame to examine the sta
 
 Adapter atop a front controller. (example in phpdbg docs; write a small package)
 
-webhelper
-
 ## Using it with PHPUnit
 
 Code coverage.

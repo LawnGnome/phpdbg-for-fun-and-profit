@@ -90,7 +90,7 @@ prompt&gt; <span class="cursor"></span></code>
 					<section id="not-xdebug">
 						<aside class="notes">
 							This does mean that your script is not running in a Web server
-							like xdebug, and your output isn't going to go to a browser.
+							like XDebug, and your output isn't going to go to a browser.
 							We'll talk about that later.
 						</aside>
 					</section>
@@ -606,7 +606,7 @@ set_exception_handler(function ($e) { echo $e; });
 					</section>
 
 					<section id="insert-evil-laugh-here">
-						<code class="terminal">aharvey@aharvey-mbp:~/Trees/phptek-tweeps$ ./artisan tweeps:update
+						<code class="terminal">root@57d38b20b3cb:/src# ./artisan tweeps:update
 Setting the name of SandyS1 to Sandy Smith
 Setting the name of phparch to php[architect]
 Setting the name of glasnt to Katie McLaughlin
@@ -625,7 +625,7 @@ Muahahahahaha!</code>
 					</section>
 
 					<section id="my-precious-evil-plan">
-						<code class="terminal">aharvey@aharvey-mbp:~/Trees/phptek-tweeps$ ./artisan tweeps:update
+						<code class="terminal">root@57d38b20b3cb:/src# ./artisan tweeps:update
 Setting the name of developerjack to Jack Skinner'; --...
 
 <div class="red-background">
@@ -647,11 +647,11 @@ Setting the name of developerjack to Jack Skinner'; --...
 					</section>
 
 					<section id="phpdbg-to-the-rescue">
-						<code class="terminal">aharvey@aharvey-mbp:~/Trees/phptek-tweeps$ phpdbg artisan
+						<code class="terminal">root@57d38b20b3cb:/src# phpdbg artisan
 <span class="green">[Welcome to phpdbg, the interactive PHP debugger, v0.5.0]</span>
 To get help using phpdbg type "help" and press enter
 <span class="green">[Please report bugs to &lt;http://bugs.php.net/report.php&gt;]</span>
-<span class="green">[Successful compilation of /Users/aharvey/Trees/phptek-tweeps/artisan]</span>
+<span class="green">[Successful compilation of /src/artisan]</span>
 prompt&gt; run tweeps:update
 Setting the name of developerjack to Jack Skinner'; --...
 
@@ -695,7 +695,7 @@ prompt&gt; <span class="cursor"></span></code>
 <span class="green">[Breakpoint #0 added at ZEND_THROW]</span>
 prompt&gt; run tweeps:update
 Setting the name of developerjack to Jack Skinner'; --...
-<span class="green">[Breakpoint #0 in ZEND_THROW at /Users/aharvey/Trees/phptek-tweeps/vendor/laravel/framework/src/Illuminate/Database/Connection.php:714, hits: 1]</span>
+<span class="green">[Breakpoint #0 in ZEND_THROW at /src/vendor/laravel/framework/src/Illuminate/Database/Connection.php:714, hits: 1]</span>
  00713:             throw new QueryException(
 &gt;00714:                 $query, $this-&gt;prepareBindings($bindings), $e
  00715:             );
@@ -727,7 +727,7 @@ given.</code>
 					<section id="backtrace">
 						<code class="terminal">prompt&gt; back
 ...
-frame #5: App\Console\Commands\UpdateTweeps-&gt;updateTweep(account="developerjack", name="Jack Skinner'; --") at /Users/aharvey/Trees/phptek-tweeps/app/Console/Commands/UpdateTweeps.php:62
+frame #5: App\Console\Commands\UpdateTweeps-&gt;updateTweep(account="developerjack", name="Jack Skinner'; --") at /src/app/Console/Commands/UpdateTweeps.php:62
 ...
 prompt&gt; <span class="cursor"></span></code>
 						<aside class="notes">
@@ -799,12 +799,25 @@ prompt&gt; <span class="cursor"></span></code>
 						</aside>
 					</section>
 
-					<section id="choices">
+					<section id="fake-plastic-trees">
+						<pre><code class="php" data-trim>
+$_SERVER = [
+  'HTTP_HOST' =&gt; 'localhost',
+  'HTTP_ACCEPT' =&gt; '...',
+  ...
+];
+$_GET = [];
+$_REQUEST = [];
+$_POST = [];
+$_COOKIE = [];
+$_FILES = [];
+chdir('public'); include 'index.php';
+						</code></pre>
+						<a href="http://phpdbg.com/docs/mocking-webserver">Source: http://phpdbg.com/docs/mocking-webserver</a>
 						<aside class="notes">
-							There are a couple of approaches. One, which is documented on the
-							phpdbg site, is to fake a request by setting the superglobals and
-							then delegating to the entry point for your framework or
-							application. Another is to use phpdbg webhelper.
+							The only viable approach today, and the one recommended by the
+							phpdbg documentation is to fake the superglobals to look like a
+							Web request.
 						</aside>
 					</section>
 
@@ -821,9 +834,9 @@ prompt&gt; <span class="cursor"></span></code>
 							</a>
 						</h2>
 						<aside class="notes">
-							For convenience's sake, I've bundled the first approach into a
-							script and accompanying library that you can install from
-							Packagist. It's rough, and PHP 7.0 only, but it works.
+							For convenience's sake, I've bundled this approach into a script
+							and accompanying library that you can install from Packagist.
+							It's rough, and PHP 7.0 only, but it works.
 						</aside>
 					</section>
 
@@ -874,11 +887,11 @@ prompt&gt; <span class="cursor"></span></code>
 					</section>
 
 					<section id="starting-fake-request">
-						<code class="terminal">aharvey@aharvey-mbp:~/Trees/phptek-tweeps$ phpdbg ./vendor/bin/fake-request GET / public/index.php -g page=2
+						<code class="terminal">root@57d38b20b3cb:/src# phpdbg ./vendor/bin/fake-request GET / public/index.php -g page=2
 <span class="green">[Welcome to phpdbg, the interactive PHP debugger, v0.5.0]</span>
 To get help using phpdbg type "help" and press enter
 <span class="green">[Please report bugs to &lt;http://bugs.php.net/report.php&gt;]</span>
-<span class="green">[Successful compilation of /Users/aharvey/Trees/phptek-tweeps/vendor/lawngnome/phpdbg-fake-request/bin/fake-request]</span>
+<span class="green">[Successful compilation of /src/vendor/lawngnome/phpdbg-fake-request/bin/fake-request]</span>
 prompt&gt; <span class="cursor"></span></code>
 						<aside class="notes">
 							We'll start up the fake-request script. (The phpdbg is optional,
@@ -939,7 +952,7 @@ Route::get('/', function () {
 						</aside>
 					</section>
 
-					<section id="">
+					<section id="strpos">
 						<code class="terminal">prompt&gt; break if strpos($tweep-&gt;name, 'alert')
 <span class="green">[Conditional breakpoint #1 added strpos($tweep-&gt;name, 'alert')/0x7f46430a8460]</span>
 prompt&gt; continue
@@ -970,6 +983,79 @@ prompt&gt; <span class="cursor"></span></code>
 							definitely going to cause problems. I guess we should use a
 							templating engine. Or at least call htmlspecialchars(), since PHP
 							is a templating engine.
+						</aside>
+					</section>
+
+					<section id="limits">
+						<aside class="notes">
+							Now, there are limits to this approach. You can't inject
+							arbitrary, non-form post data, as you can't override the
+							php://input stream. You'd have to modify your front controller to
+							accept post data from somewhere else. And you're reliant on how
+							good the emulation is. But that's why XDebug exists.
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section id="code-coverage">
+						<aside class="notes">
+							You can also use phpdbg as a driver for PHPUnit's code coverage.
+							This has the twin advantages that you can get code coverage on
+							new versions of PHP if XDebug doesn't yet support them, and also
+							that phpdbg is considerably quicker.
+						</aside>
+					</section>
+
+					<section id="running-phpunit">
+						<code class="terminal">root@de345107bc84:/src# phpdbg -qrr vendor/bin/phpunit --color --coverage-html coverage
+PHPUnit 5.3.4 by Sebastian Bergmann and contributors.
+
+.......................                       23 / 23 (100%)
+
+Time: 1.45 seconds, Memory: 6.00MB
+
+<span class="green-background">OK (23 tests, 29 assertions)</span>
+
+Generating code coverage report in HTML format ... done</code>
+						<aside class="notes">
+							Assuming you have a normal Composer-based setup, you can get code
+							coverage by simply running phpunit under phpdbg with the right
+							switches or configuration. (Explain -qrr.) Here I'm running the
+							test suite for my phpdbg request faker.
+						</aside>
+					</section>
+
+					<section id="coverage-results" data-background="images/coverage.png">
+						<aside class="notes">
+							And there are the results. Good job! Particularly on excluding
+							the command directory which doesn't have integration tests
+							yet&hellip;
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section id="ides">
+						<aside class="notes">
+							When I wrote the abstract for this talk, I mentioned IDE support,
+							having heard of plans to implement phpdbg support in various
+							IDEs. Unfortunately, as of today, there is no IDE I know of that
+							implements support for phpdbg's remote protocol. PHPStorm has it
+							on their roadmap, but without a version. NetBeans has an
+							untriaged feature request. (Conclude on CLI, still useful, etc.)
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section id="xdebug">
+						<aside class="notes">
+							Of course, phpdbg also isn't the only game in town. There's
+							XDebug. And if you have complex Web needs beyond what you can
+							fake, it's still the best choice. But phpdbg is lightweight, easy
+							if you're comfortable with the command line (and you should be),
+							and much easier to set up. Consider it for those simple tasks!
 						</aside>
 					</section>
 				</section>
