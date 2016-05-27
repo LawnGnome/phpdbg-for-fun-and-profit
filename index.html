@@ -304,6 +304,8 @@ executing will result in an "execution in progress" error.</code>
 						<aside class="notes">
 							The script that I loaded is a FizzBuzz implementation, and it
 							takes the maximum number as an argument. So let's run it.
+							(FizzBuzz: divisible by 3 is Fizz; by 5 is Buzz; by both is
+							FizzBuzz.)
 						</aside>
 					</section>
 
@@ -540,8 +542,32 @@ prompt&gt; <span class="cursor"></span></code>
 					</section>
 				</section>
 
-				<section>
-					<section id="exceptional">
+				<section data-background="images/danger.jpg">
+					<section id="exceptions">
+						<aside class="notes">
+							Before we move onto a slightly more involved example, here's
+							another case where phpdbg will stop execution: exceptions.
+						</aside>
+					</section>
+
+					<section data-state="translucent" data-background="translucent" id="no-exception-handler">
+						<pre><code class="php" data-trim>
+class TableFlipException extends Exception {}
+
+function （╯°□°）╯︵ ┻━┻() {
+  throw new TableFlipException('ruh roh');
+}
+
+（╯°□°）╯︵ ┻━┻();
+						</code></pre>
+						<aside class="notes">
+							Here's our sample code, which Sara kindly turned into a Packagist
+							package yesterday. We'll throw an exception, and there's no
+							try-catch or exception handler.
+						</aside>
+					</section>
+
+					<section data-state="translucent" data-background="translucent" id="exceptional">
 						<code class="terminal">aharvey@aharvey-mbp:/tmp$ phpdbg code/exception.php
 <span class="green">[Welcome to phpdbg, the interactive PHP debugger, v0.5.0]</span>
 To get help using phpdbg type "help" and press enter
@@ -554,14 +580,12 @@ prompt&gt; r
  00007:
 prompt&gt; <span class="cursor"></span></code>
 						<aside class="notes">
-							Before we move onto a slightly more involved example, here's
-							another case where phpdbg will stop execution: exceptions. The
-							nice thing here is that phpdbg goes back to the point where the
-							exception is thrown.
+							The nice thing here is that phpdbg goes back to the point where
+							the exception is thrown.
 						</aside>
 					</section>
 
-					<section id="exception-handler">
+					<section data-state="translucent" data-background="translucent" id="exception-handler">
 						<pre><code class="php" data-trim>
 class TableFlipException extends Exception {}
 
@@ -579,6 +603,49 @@ set_exception_handler(function ($e) { echo $e; });
 							you have a catch block, but if it makes it all the way to the
 							exception handler, phpdbg will stop. That's fine, as long as you
 							don't use exceptions for flow control, right?
+						</aside>
+					</section>
+
+					<section data-state="translucent" data-background="translucent" id="heres-the-proof-fully-ablaze">
+						<code class="terminal">aharvey@aharvey-mbp:/tmp$ phpdbg code/exception.php
+<span class="green">[Welcome to phpdbg, the interactive PHP debugger, v0.5.0]</span>
+To get help using phpdbg type "help" and press enter
+<span class="green">[Please report bugs to &lt;http://bugs.php.net/report.php&gt;]</span>
+<span class="green">[Successful compilation of /tmp/code/exception.php]</span>
+prompt&gt; r
+<span class="red">[Uncaught TableFlipException in /tmp/code/exception.php on line 5: ruh roh]</span>
+&gt;00005:   throw new TableFlipException('ruh roh');
+ 00006: }
+ 00007:
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							Here's the proof. Execution still stops at the same point, even
+							though there's an exception handler that will eventually take
+							care of this.
+						</aside>
+					</section>
+
+					<section data-state="translucent" data-background="translucent" id="opcodes">
+						<pre><code class="php" data-trim>
+function （╯°□°）╯︵ ┻━┻() {
+  throw new TableFlipException('ruh roh');
+}
+						</code></pre>
+						<code class="terminal">prompt&gt; print
+<span class="green">[Stack in （╯°□°）╯︵ ┻━┻() (5 ops)]</span>
+L4-6 （╯°□°）╯︵ ┻━┻() /Users/aharvey/Trees/phpdbg-for-fun-and-profit/code/exception.php - 0x11206e180 + 5 ops
+ L5  #0  NEW          "TableFlipException"        @0
+ L5  #1  SEND_VAL_EX  "ruh roh"             1
+ L5  #2  DO_FCALL
+ L5  #3  THROW        @0
+ L6  #4  RETURN       null
+prompt&gt; <span class="cursor"></span></code>
+						<aside class="notes">
+							On a tangent, you can also get phpdbg to show you the actual
+							opcodes for the context you're currently in. The table flipping
+							function is a good one to look at, because you can see how this
+							maps. Why is this important? Firstly, you can have phpdbg work by
+							opcode instead of line. Secondly&hellip; well, you'll see.
 						</aside>
 					</section>
 				</section>
@@ -685,8 +752,9 @@ prompt&gt; <span class="cursor"></span></code>
 						</code></pre>
 						<aside class="notes">
 							(Sorry, I am contractually required to have at least one slide of
-							C in each talk.) ZEND_THROW is the opcode used when an exception
-							is being thrown. So let's try breaking on that.
+							C in each talk.) Remember those opcodes we saw a few slides back?
+							There's a THROW opcode! ZEND_THROW is the opcode used when an
+							exception is being thrown. So let's try breaking on that.
 						</aside>
 					</section>
 
@@ -919,7 +987,11 @@ prompt&gt; <span class="cursor"></span></code>
  00017:
 prompt&gt; <span class="cursor"></span></code>
 						<aside class="notes">
-							OK, we're in. We can use the list command to examine the function, but I'm going to just show you the highlights on the next slide. Looking at the function in my text editor of choice
+							OK, we're in. We can use the list command to examine the
+							function, but I'm going to just show you the highlights on the
+							next slide. (List is also probably the most awkward command in
+							phpdbg. In practice, I'd probably just open it up in an editor
+							tiled alongside.)
 						</aside>
 					</section>
 

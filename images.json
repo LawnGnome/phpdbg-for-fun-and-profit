@@ -41,82 +41,10 @@
     "author": "Jonas Bergsten",
     "title": "ATA connector"
   },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
-  },
-  "": {
-    "licence": "CC-BY 2.0",
-    "source": "",
-    "author": "",
-    "title": ""
+  "exceptions": {
+    "licence": "CC-BY-SA 2.0",
+    "source": "https://flic.kr/p/47sMGm",
+    "author": "Yaffa Phillips",
+    "title": "Danger"
   }
 }
