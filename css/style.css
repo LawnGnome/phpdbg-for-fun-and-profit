@@ -42,6 +42,15 @@
   opacity: 0.5;
 }
 
+.reveal img.logo, .reveal a:hover img.logo {
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+}
+.reveal a:hover img.logo {
+  opacity: 0.5;
+}
+
 .octicon {
   font-family: octicons !important;
   font-size: 1em !important;
@@ -119,10 +128,7 @@
   opacity: 0.15;
 }
 
-/* Hacky workaround for the web example. */
-.backgrounds .stack div[style*="background-image"][data-background-hash*="coverage.png"].slide-background.present,
-.backgrounds .stack div[style*="background-image"][data-background-hash*="page1.png"].slide-background.present,
-.backgrounds .stack div[style*="background-image"][data-background-hash*="page2.png"].slide-background.present {
+.backgrounds .stack div[style*="background-image"].slide-background.present:not([data-background-hash*="translucent"]) {
   opacity: 1;
 }
 
