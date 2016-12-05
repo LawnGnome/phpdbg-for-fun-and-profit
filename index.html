@@ -105,11 +105,13 @@ prompt&gt; <span class="cursor"></span></code>
 						<pre><code class="sh" data-trim>
 apt-get install php5-phpdbg
 apt-get install php7.0-phpdbg
+apt-get install php7.1-phpdbg
 						</code></pre>
 						<aside class="notes">
 							On Debian and Ubuntu, there are packages available in recent
 							versions: in practice, that means Vivid, Wily and Xenial for
-							Ubuntu and Jessie for Debian.
+							Ubuntu and Jessie for Debian. Additionally, Ondřej Surý packages
+							phpdbg for all versions back to Precise.
 						</aside>
 					</section>
 
@@ -118,6 +120,7 @@ apt-get install php7.0-phpdbg
 						<pre><code class="sh" data-trim>
 yum install php56-php-dbg
 yum install php70-php-dbg
+yum install php71-php-dbg
 dnf install php-dbg
 						</code></pre>
 						<aside class="notes">
@@ -562,8 +565,8 @@ function （╯°□°）╯︵ ┻━┻() {
 						</code></pre>
 						<aside class="notes">
 							Here's our sample code, which Sara kindly turned into a Packagist
-							package yesterday. We'll throw an exception, and there's no
-							try-catch or exception handler.
+							package earlier this year. We'll throw an exception, and there's
+							no try-catch or exception handler.
 						</aside>
 					</section>
 
@@ -657,31 +660,32 @@ prompt&gt; <span class="cursor"></span></code>
 						</aside>
 					</section>
 
-					<section data-state="translucent" data-background="translucent" id="phptek-tweeps">
+					<section data-state="translucent" data-background="translucent" id="confoo-tweeps">
 						<h2>
-							<a href="https://github.com/LawnGnome/phptek-tweeps">
+							<a href="https://github.com/LawnGnome/confoo-tweeps">
 								<span class="octicon octicon-mark-github"></span>
-								<code>LawnGnome/phptek-tweeps</code>
+								<code>LawnGnome/confoo-tweeps</code>
 							</a>
 						</h2>
 						<aside class="notes">
-							Here is a project called phptek/tweeps. It's on GitHub! It's
+							Here is a project called confoo-tweeps. It's on GitHub! It's
 							written in Laravel! It uses façades! It must be good, right?
 							Basically, this allows me to scrape the accounts and user names
-							of people who tweet about #phptek because REASONS.
+							of people who tweet about #confoo because REASONS.
 						</aside>
 					</section>
 
 					<section data-state="translucent" data-background="translucent" id="insert-evil-laugh-here">
-						<code class="terminal">root@57d38b20b3cb:/src# ./artisan tweeps:update
-Setting the name of SandyS1 to Sandy Smith
-Setting the name of phparch to php[architect]
-Setting the name of glasnt to Katie McLaughlin
-Setting the name of enygma to Chris Cornutt
-Setting the name of nomadphp to Nomad PHP
-Setting the name of ramsey to Ben Ramsey
-Setting the name of LGnome to Adam Harvey
-Setting the name of asgrim to Asgrimy McAsgrimface
+						<code class="terminal">root@57d38b20b3cb:/src# php artisan tweeps:update
+Setting the name of LGnome to 'Adam Harvey'...
+Setting the name of adamculp to Adam Culp...
+Setting the name of afilina to Anna Filina...
+Setting the name of serialseb to SerialSeb 🇪🇺🏳️‍🌈...
+Setting the name of hannelita to Hanneli Tavante...
+Setting the name of confooca to ConFoo Conference...
+Setting the name of EliW to EliW...
+Setting the name of beausimensen to Beau D. Simensen...
+Setting the name of pjf to Paul Fenwick...
 
 Muahahahahaha!</code>
 						<aside class="notes">
@@ -692,8 +696,8 @@ Muahahahahaha!</code>
 					</section>
 
 					<section data-state="translucent" data-background="translucent" id="my-precious-evil-plan">
-						<code class="terminal">root@57d38b20b3cb:/src# ./artisan tweeps:update
-Setting the name of developerjack to Jack Skinner'; --...
+						<code class="terminal">root@57d38b20b3cb:/src# php artisan tweeps:update
+Setting the name of LGnome to 'Adam Harvey'...
 
 <div class="red-background">
   [Illuminate\Database\QueryException]
@@ -701,8 +705,8 @@ Setting the name of developerjack to Jack Skinner'; --...
    You have an error in your SQL syntax; check the manual
    that corresponds to your MariaDB server version for th
   e right syntax to use near '; --')' at line 1 (SQL: REP
-  LACE INTO tweeps (account, name) VALUES ('developerjack
-  ', 'Jack Skinner'; --'))
+  LACE INTO tweeps (account, name) VALUES ('LGnome', ''Ad
+  am Harvey''))
 
 </div></code>
 						<aside class="notes">
@@ -720,7 +724,7 @@ To get help using phpdbg type "help" and press enter
 <span class="green">[Please report bugs to &lt;http://bugs.php.net/report.php&gt;]</span>
 <span class="green">[Successful compilation of /src/artisan]</span>
 prompt&gt; run tweeps:update
-Setting the name of developerjack to Jack Skinner'; --...
+Setting the name of LGnome to 'Adam Harvey'...
 
 <div class="red-background">[Illuminate\Database\QueryException]
 	...
@@ -762,7 +766,7 @@ prompt&gt; <span class="cursor"></span></code>
 						<code class="terminal">prompt&gt; break ZEND_THROW
 <span class="green">[Breakpoint #0 added at ZEND_THROW]</span>
 prompt&gt; run tweeps:update
-Setting the name of developerjack to Jack Skinner'; --...
+Setting the name of LGnome to 'Adam Harvey'...
 <span class="green">[Breakpoint #0 in ZEND_THROW at /src/vendor/laravel/framework/src/Illuminate/Database/Connection.php:714, hits: 1]</span>
  00713:             throw new QueryException(
 &gt;00714:                 $query, $this-&gt;prepareBindings($bindings), $e
@@ -795,7 +799,7 @@ given.</code>
 					<section data-state="translucent" data-background="translucent" id="backtrace">
 						<code class="terminal">prompt&gt; back
 ...
-frame #5: App\Console\Commands\UpdateTweeps-&gt;updateTweep(account="developerjack", name="Jack Skinner'; --") at /src/app/Console/Commands/UpdateTweeps.php:62
+frame #5: App\Console\Commands\UpdateTweeps-&gt;updateTweep(account="LGnome", name="'Adam Harvey'") at /src/app/Console/Commands/UpdateTweeps.php:62
 ...
 prompt&gt; <span class="cursor"></span></code>
 						<aside class="notes">
@@ -837,9 +841,9 @@ prompt&gt; <span class="cursor"></span></code>
 
 					<section data-state="translucent" data-background="translucent" id="he-is-living-comfort-eagle">
 						<code class="terminal">prompt&gt; ev $name
-Jack Skinner'; --
+'Adam Harvey'
 prompt&gt; ev $_ = "REPLACE INTO tweeps (account, name) VALUES ('$account', '$name')"
-REPLACE INTO tweeps (account, name) VALUES ('developerjack', 'Jack Skinner'; --')
+REPLACE INTO tweeps (account, name) VALUES ('LGnome', ''Adam Harvey'')
 prompt&gt; <span class="cursor"></span></code>
 						<aside class="notes">
 							Let's look at the local $name and evaluate the string just to
@@ -848,9 +852,8 @@ prompt&gt; <span class="cursor"></span></code>
 							after a command is assumed to be a parameter delimiter, and isn't
 							passed to ev.)
 							<br>
-							Little Bobby Tables&hellip; er, developerjack teaches us once
-							again that parameterised queries are a good thing. (Sorry,
-							Colin.)
+							Little Bobby Tables teaches us once again that parameterised
+							queries are a good thing.
 						</aside>
 					</section>
 				</section>
@@ -859,7 +862,7 @@ prompt&gt; <span class="cursor"></span></code>
 					<section id="web">
 						<aside class="notes">
 							All that's good, but most of us spend more time on web sites than
-							CLI scripts. (Sorry, Cal.) How can we deal with that?
+							CLI scripts. How can we deal with that?
 						</aside>
 					</section>
 
@@ -900,13 +903,13 @@ chdir('public'); include 'index.php';
 						<aside class="notes">
 							For convenience's sake, I've bundled this approach into a script
 							and accompanying library that you can install from Packagist.
-							It's rough, and PHP 7.0 only, but it works.
+							It's rough, and PHP 7 only, but it works.
 						</aside>
 					</section>
 
 					<section id="web-example" data-background="images/page1.png">
 						<aside class="notes">
-							Let's look at the web interface for the phptek tweeps
+							Let's look at the web interface for the confoo tweeps
 							application. It can't be as bad as the artisan command, right?
 							Page one looks good. Lots of cool people there. Let's go to page
 							two&hellip;
@@ -982,7 +985,7 @@ prompt&gt; <span class="cursor"></span></code>
 					<section data-state="translucent" data-background="translucent" id="getting-warmer">
 						<code class="terminal">prompt&gt; run
 <span class="green">[Breakpoint #0 at /src/app/Http/routes.php:15, hits: 1]</span>
-&gt;00015:     $tweeps = DB::table('tweeps')-&gt;paginate(30);
+&gt;00015:     $tweeps = DB::table('tweeps')-&gt;paginate(15);
  00016:     ob_start();
  00017:
 prompt&gt; <span class="cursor"></span></code>
@@ -1085,8 +1088,9 @@ Generating code coverage report in HTML format ... done</code>
 						<aside class="notes">
 							Assuming you have a normal Composer-based setup, you can get code
 							coverage by simply running phpunit under phpdbg with the right
-							switches or configuration. (Explain -qrr.) Here I'm running the
-							test suite for my phpdbg request faker.
+							switches or configuration. -qrr hides the banner, runs
+							immediately, and then quits. Here I'm running the test suite for
+							my phpdbg request faker.
 						</aside>
 					</section>
 
@@ -1131,7 +1135,6 @@ Generating code coverage report in HTML format ... done</code>
 					<section id="questions">
 						<h1>Thank you!</h1>
 						<h2>Questions?</h2>
-						<h3><a href="https://joind.in/talk/38764">https://joind.in/talk/38764</a></h3>
 						<h3><a href="https://twitter.com/LGnome">@LGnome</a><h3>
 						<p>
 							Slides:

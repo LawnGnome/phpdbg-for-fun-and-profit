@@ -137,6 +137,10 @@
   font-size: 3em;
 }
 
+#hax0r > img:first-child {
+  width: 75vw;
+}
+
 .image-credits .licence:before {
   content: " (";
 }
