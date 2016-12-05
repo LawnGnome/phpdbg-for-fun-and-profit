@@ -1001,7 +1001,7 @@ prompt&gt; <span class="cursor"></span></code>
 					<section data-state="translucent" data-background="translucent" id="da-controller">
 						<pre><code class="" data-trim>
 Route::get('/', function () {
-    $tweeps = DB::table('tweeps')-&gt;paginate(30);
+    $tweeps = DB::table('tweeps')-&gt;paginate(15);
     ob_start();
 ?&gt;
 ...
